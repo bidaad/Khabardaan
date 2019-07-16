@@ -117,6 +117,8 @@ export default class CatList extends Component {
 }
 
 
+
+
 const Estyles = EStyleSheet.create({
     caption: {
         textAlign: 'center',
