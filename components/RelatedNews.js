@@ -86,7 +86,7 @@ export default class RelatedNews extends Component {
         push('ShowNews', { newsCode: newsCode });
     }
 
-    componentWillReceiveProps(){
+    componentDidMount(){
         if(this.props.entityCode != undefined)
             this.getRemoteData(this.props.entityCode);
     }
@@ -139,7 +139,7 @@ var classes = {
         padding: 8,
         backgroundColor: '#F4F2F2',
         textAlign: 'right',
-        fontFamily: "byekan",
+        fontFamily: "IRANSansMobile(FaNum)_Light",
         flex: 1
     },
     NewsRow2Col: {
@@ -149,7 +149,7 @@ var classes = {
         padding: 8,
         backgroundColor: '#F4F2F2',
         textAlign: 'right',
-        fontFamily: "byekan",
+        fontFamily: "IRANSansMobile(FaNum)_Light",
         flex: 1,
         flexDirection: 'row',
         flexWrap: 'wrap',
@@ -162,13 +162,13 @@ var classes = {
         width: '30%'
     },
     title: {
-        fontFamily: "byekan",
+        fontFamily: "IRANSansMobile(FaNum)_Light",
         padding: 5,
         fontSize: 15,
         lineHeight: 23,
     },
     smallText: {
-        fontFamily: "byekan",
+        fontFamily: "IRANSansMobile(FaNum)_Light",
         padding: 5,
         fontSize: 12,
         color: '#AFADAD'
@@ -176,7 +176,7 @@ var classes = {
     caption: {
         textAlign: 'center',
         width: '100%',
-        fontFamily: "byekan",
+        fontFamily: "IRANSansMobile(FaNum)_Light",
     },
     ImageContainer: {
         margin: 3,

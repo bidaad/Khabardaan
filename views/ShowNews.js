@@ -1,10 +1,11 @@
 import React, { Component } from 'react'
-import { ScrollView, WebView, Text, View, Image,  TouchableOpacity, Dimensions } from 'react-native';
+import { ScrollView, WebView, Text, View, Image,  TouchableOpacity, Dimensions, FlatList } from 'react-native';
 import BootstrapStyleSheet from 'react-native-bootstrap-styles';
 import Tools from '../Tools';
 import Share from 'react-native-share';
 //import RNFetchBlob from "react-native-fetch-blob";
 import RelatedNews from '../components/RelatedNews'
+import KeywordList from '../components/KeywordList'
 import AutoHeightImage from 'react-native-auto-height-image';
 import EStyleSheet from 'react-native-extended-stylesheet';
 
@@ -20,7 +21,7 @@ var constants = {
 };
 
 // custom classes
-var classes = {
+var classes = EStyleSheet.create( {
     buttonContainer: {
         flex: 1,
         flexDirection: 'row',
@@ -32,7 +33,7 @@ var classes = {
     },
     newsTitle: {
         color: '#FFFFFF',
-        fontFamily: 'byekan'
+        fontFamily: 'IRANSansMobile(FaNum)_Light'
     },
     newsContainer: {
         flex: 1
@@ -45,9 +46,9 @@ var classes = {
         backgroundColor: '#F2F0F0',
         textAlign: 'justify',
         alignSelf: 'stretch',
-        fontFamily: "byekan",
-        lineHeight: 25,
-        fontSize: 12 ,
+        fontFamily: "IRANSansMobile(FaNum)_Light",
+        lineHeight: 23,
+        fontSize: '2.6rem',
     },
     thumb: {
         flex: 1,
@@ -55,24 +56,17 @@ var classes = {
         borderWidth: 1,
         justifyContent: 'center',
         alignItems: 'center',
-
     },
-};
-
-const Estyles = EStyleSheet.create({
-    newsStory: {
-        borderBottomWidth: 1,
-        borderColor: '#0076B8',
-        borderRadius: 5,
-        padding: 20,
-        backgroundColor: '#F2F0F0',
-        textAlign: 'justify',
-        alignSelf: 'stretch',
-        fontFamily: "byekan",
-        lineHeight: 23,
-        fontSize: '2.3rem',
-    }
+    newsImageContainer:{
+        width:'100%',
+        padding:5,
+        margin:5,
+        alignSelf:'center'
+    },
+    
 });
+
+
 
 const bootstrapStyleSheet = new BootstrapStyleSheet(constants, classes);
 const s = styles = bootstrapStyleSheet.create();
@@ -90,6 +84,7 @@ export default class ShowNews extends Component {
             strImgBase64: '',
             newsCode : null,
             navigate : this.props.navigation,
+            NewsImages: []
         }
     }
 
@@ -126,7 +121,6 @@ export default class ShowNews extends Component {
         };
         Share.shareSingle(shareOptions);
     }
-
 
     shareTelegram = () => {
         const shareOptions = {
@@ -185,7 +179,6 @@ export default class ShowNews extends Component {
 
     }
 
-
     componentDidMount() {
         const { params } = this.props.navigation.state;
         if(params.newsCode != undefined)
@@ -194,7 +187,7 @@ export default class ShowNews extends Component {
     }
     getRemoteData = (newsCode) => {
         const url = global.APIPath + 'news/' + newsCode;
-        console.log('SHOWNEWSURL=' + url);
+        //console.log('SHOWNEWSURL=' + url);
 
         fetch(url)
             .then(res => res.json())
@@ -210,6 +203,7 @@ export default class ShowNews extends Component {
                     strStory: new Tools().GenParagraph( Tools.removeSpecialChars(res[0].Contents)),
                     strImgUrl: res[0].ImgUrl,
                     newsCode: res[0].Code,
+                    NewsImages: res[0].NewsImages,
                     isLoading: false,
                     message: '',
                     //strImgbase64: str64
@@ -228,11 +222,34 @@ export default class ShowNews extends Component {
     }
 
 
+
     render() {
+        const { params } = this.props.navigation.state;
+
         const entireScreenWidth = Dimensions.get('window').width;
         EStyleSheet.build({$rem: entireScreenWidth / 70});
 
-        const { strTitle, strStory, strImgUrl, newsCode } = this.state;
+        const { strTitle, strStory, strImgUrl, newsCode, NewsImages } = this.state;
+
+        //console.log('images=' + NewsImages);
+        var str = '[{"Code":86109,"NewsCode":770224,"ImgUrl":"aaaaa"},{"Code":86110,"NewsCode":770224,"ImgUrl":"bbb"}]'
+        console.log('strjson111=' + NewsImages);
+        
+        //var NewsImages = str.substring(1, str.length - 1);
+        //NewsImages = JSON.parse(str);
+
+        //const jsonImages = JSON.parse(NewsImages);
+        //alert(NewsImages.length);
+        const jsonImages = NewsImages != '' ? JSON.parse(NewsImages):  null;
+
+        //alert(NewsImages)
+        var storyWithImages = '';
+        for( i=0; i < 5; i++)
+        {
+            storyWithImages += <Text>Test{i}</Text>;
+        }
+
+        if(strTitle)
         return (
             <ScrollView style={[s.body, classes.newsContainer]} >
                 {strImgUrl ? <AutoHeightImage  width={win.width} style={classes.thumb}  source={{ uri: strImgUrl }} /> : null}
@@ -241,18 +258,29 @@ export default class ShowNews extends Component {
                     {strTitle}
                 </Text>
 
-                <Text style={Estyles.newsStory}>
+                <Text style={classes.newsStory}>
                     {strStory}
                 </Text>
+                <FlatList
+                    data={jsonImages}
+                    renderItem={({item}) => <View style={classes.newsImageContainer}>
+                    <AutoHeightImage width={win.width - 10} style={classes.thumb}  source={{ uri: item.ImgUrl }} />
+                    </View>
+                    }
+                />
+                <KeywordList navigation={this.props.navigation} EntityCode={params.newsCode} />
                 <View style={classes.buttonContainer}>
                     <TouchableOpacity style={classes.shareButton} onPress={this.shareTelegram}><Image source={require('../img/telegram.png')} /></TouchableOpacity>
                     <TouchableOpacity style={classes.shareButton} onPress={this.shareInstagram}><Image source={require('../img/instagram.png')} /></TouchableOpacity>
                     <TouchableOpacity style={classes.shareButton} onPress={this.shareWhatsapp}><Image source={require('../img/whatsapp.png')} /></TouchableOpacity>
                     <TouchableOpacity style={classes.shareButton} onPress={this.shareEmail}><Image source={require('../img/email.png')} /></TouchableOpacity>
                 </View>
-                <RelatedNews navigation={this.props.navigation} entityCode={newsCode} />
+                
+                <RelatedNews navigation={this.props.navigation} entityCode={params.newsCode} />
             </ScrollView>
         )
+        else
+            return null;
     }
 }
 

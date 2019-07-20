@@ -33,7 +33,7 @@ var classes = {
     textAlign: "center",
   },
   font2: {
-    fontFamily: "byekan",
+    fontFamily: "IRANSansMobile(FaNum)_Light",
     fontSize: 30,
     textAlign: "center",
   },

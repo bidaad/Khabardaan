@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
     color: '#8C8C8C',
     fontSize:14,
     textAlign: 'right',
-    fontFamily: "byekan",
+    fontFamily: "IRANSansMobile(FaNum)_Light",
 
   }
 });

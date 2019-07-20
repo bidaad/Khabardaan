@@ -19,7 +19,6 @@ export default class Home extends Component {
   static router = PageA.router;
 
   render() {
-    console.log('nav=' + this.props.navigation.state.index);
 
     return (
       <View style={{ flex: 1 }}>

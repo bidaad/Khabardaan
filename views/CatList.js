@@ -12,7 +12,8 @@ import {
     FlatList,
     TouchableOpacity,
     Dimensions,
-    ScrollView
+    ScrollView,
+    RefreshControl
 } from 'react-native';
 import EStyleSheet from 'react-native-extended-stylesheet';
 
@@ -22,7 +23,8 @@ export default class CatList extends Component {
 
         this.state = {
             isLoading: true,
-            message: 'در حال بارگزاری'
+            message: 'در حال بارگزاری',
+            refreshing: false,
         }
 
         const isPortrait = () => {
@@ -51,6 +53,7 @@ export default class CatList extends Component {
         //url = 'https://jsonplaceholder.typicode.com/todos/1'
         console.log('Try get URL=' + url);
         fetch(url)
+            
             .then(res => res.json())
             .then(res => {
                 console.log('success fetch');
@@ -61,7 +64,7 @@ export default class CatList extends Component {
                 });
             })
             .catch(error => {
-                this.setState({ message: 'بارگزاری با خطا مواجه شد', isLoading: false });
+                this.setState({ message: 'ERROR', isLoading: false });
                 console.log('ERROR=' + error);
             });
 
@@ -77,27 +80,37 @@ export default class CatList extends Component {
     }
 
 
+    _onRefresh = () => {
+
+        this.setState({ isLoading: true });
+        this.getRemoteData();
+    }
+
     render() {
         const entireScreenWidth = Dimensions.get('window').width;
         EStyleSheet.build({ $rem: entireScreenWidth / 70 });
 
-        const spinner = this.state.isLoading ?
-            <ActivityIndicator size='large' /> : null;
+        const spinner = this.state.isLoading ? <ActivityIndicator size='large' /> : null;
 
         const { data, message } = this.state;
         const numColumns = this.state.orientation === 'portrait' ? 3 : 5;
         const flatKeyVal = this.state.orientation === 'portrait' ? 1 : 2;
-        const min = 1;
-        const max = 100;
-        const rand = min + Math.random() * (max - min);
+        const TryAgain = message === 'ERROR' ? <View style={[{flex:1,padding:20}]}><Text style={styles.caption}>بارگزاری با خطا مواجه شد</Text><Button onPress={this.getRemoteData} title="تلاش مجدد"></Button></View> : null;
+
 
         return (
-            <ScrollView style={styles.FullWidth} >
-
+            <View
+                refreshControl={
+                    <RefreshControl
+                        refreshing={this.state.isLoading}
+                        onRefresh={this._onRefresh}
+                    ></RefreshControl>
+                }
+                style={styles.FullWidth} >
                 {spinner}
-                <Text>
-                    {message}
-                </Text>
+
+                {TryAgain}
+                
                 <FlatList
                     style={styles.FullWidth}
                     key={flatKeyVal}
@@ -106,12 +119,12 @@ export default class CatList extends Component {
                     keyExtractor={this._keyExtractor}
                     renderItem={({ item }) =>
                         <TouchableOpacity style={styles.GridCell} onPress={() => this.clickHandler(item.catcode)} key={item.code}  >
-                            <Image style={styles.thumb} key={new Date()} source={{ uri: item.imgurl + "?rnd=" + rand }} />
+                            <Image style={styles.thumb} key={new Date()} source={{ uri: "http://static.parset.com/Files/News/" + item.picname }} />
                             <Text style={Estyles.caption}>{item.catname}</Text>
                         </TouchableOpacity>
                     }
                 />
-            </ScrollView>
+            </View>
         )
     }
 }
@@ -123,7 +136,7 @@ const Estyles = EStyleSheet.create({
     caption: {
         textAlign: 'center',
         width: '100%',
-        fontFamily: "byekan",
+        fontFamily: "IRANSansMobile(FaNum)_Light",
         color: '#000000',
         fontSize: '2rem'
     },

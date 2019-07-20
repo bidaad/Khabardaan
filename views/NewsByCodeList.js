@@ -8,9 +8,9 @@ import {
     MenuOptions,
     MenuOption,
     MenuTrigger,
-  } from 'react-native-popup-menu';
+} from 'react-native-popup-menu';
+import { ToastAndroid } from 'react-native';
 
-  
 export class NewsByCodeList extends Component {
     constructor(props) {
         super(props)
@@ -58,8 +58,8 @@ export class NewsByCodeList extends Component {
 
         return (
             <MenuProvider >
-                
-                <NewsList navigation={this.props.navigation} taggedCodeList={this.state.newsCodeList} />
+
+                <NewsList ShowTaggedNews="1" navigation={this.props.navigation} taggedCodeList={this.state.newsCodeList} />
             </MenuProvider>
         )
     }
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
         padding: 5,
         borderRadius: 5,
         fontSize: 20,
-        fontFamily: "byekan",
+        fontFamily: "IRANSansMobile(FaNum)_Light",
         marginRight: 5,
     },
 

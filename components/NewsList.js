@@ -11,6 +11,8 @@ import {
     FlatList,
     TouchableOpacity,
     Dimensions,
+    RefreshControl,
+    ToastAndroid
 } from 'react-native';
 import Tools from '../Tools';
 import { AsyncStorage } from 'react-native';
@@ -139,6 +141,8 @@ class NewsItem extends Component {
         const { item } = this.props;
 
         var NewsTitle = item.Title;
+        const NDate = item.NDate;
+        const NTime = item.NTime;
 
         //console.log('title=' + NewsTitle);
 
@@ -160,50 +164,57 @@ class NewsItem extends Component {
 
 
         if (item.ImgUrl)
-            return (
-                <TouchableOpacity style={styles.NewsRow2Col} onPress={() => this.clickHandler(item.Code)} key={item.Code}  >
+            if (this.props.onlyPic)
+                return(
+                <TouchableOpacity activeOpacity={1} style={styles.onlyPicConatiner} onPress={() => this.clickHandler(item.Code)} key={item.Code}  >
 
-                    <View style={styles.RightCol}>
+                    <View >
                         <View style={styles.ImageContainer}>
                             <Image style={[styles.thumb]} source={{ uri: item.ImgUrl }} />
                         </View>
                     </View>
 
-                    <View style={styles.LeftCol}>
-                        <Text style={styles.caption}>
-                            {NewsTitle}
-                        </Text>
-                    </View>
-                    <View style={[styles.RightCol, { width: '70%' }]}>
-                        <Menu optionsContainerStyle onSelect={value => alert(`Selected number: ${value}`)}>
-                            <MenuOptions style={[styles.popupMenuContainer]}>
-                                <MenuOption value={1} text='One' />
-                                <MenuOption value={2}>
-                                    <Text style={{ color: 'red' }}>Two</Text>
-                                </MenuOption>
-                                <MenuOption value={3} disabled={true} text='Three' />
-                            </MenuOptions>
-                            <MenuTrigger style={[styles.smallText]} text={item.ResourceName} />
-                        </Menu>
+                    <View  style={[{ width: '100%' }]}>
+                        <Text style={styles.caption}>{NewsTitle}</Text>
 
                     </View>
-                    <View style={[styles.LeftCol, { flexDirection: 'row', alignItems: 'flex-start', width: '30%', flexDirection: 'row-reverse' }]}>
-
-                        <View>
-                            <TouchableOpacity onPress={this.tagClickHandler}>
-                                {tagImage}
-                            </TouchableOpacity>
-                        </View>
-                        <Text style={styles.smallText}>
-                            {item.NDate}
-                        </Text>
-                    </View>
+                    
                 </TouchableOpacity >
-            )
+                )
+            else
+                return (
+                    <TouchableOpacity style={styles.NewsRow2Col} onPress={() => this.clickHandler(item.Code)} key={item.Code}  >
+
+                        <View style={styles.RightCol}>
+                            <View style={styles.ImageContainer}>
+                                <Image style={[styles.thumb]} source={{ uri: "http://static.parset.com/Files/News/" + item.PicName }} />
+                            </View>
+                        </View>
+
+                        <View style={styles.LeftCol}>
+                            <Text style={styles.caption}>{NewsTitle}</Text>
+
+                        </View>
+                        <View style={[{ width: '50%' }]}>
+                            <Text style={styles.smallText}>
+                                {item.ResourceName}
+                            </Text>
+                        </View>
+                        <View style={[{ flexDirection: 'row', alignItems: 'flex-end', width: '50%', flexDirection: 'row-reverse' }]}>
+                            <View style={styles.dateInfo}>
+                                <TouchableOpacity onPress={this.tagClickHandler}>
+                                    {tagImage}
+                                </TouchableOpacity>
+                                <Text style={styles.mediumText}>{NDate}</Text>
+                                <Text style={styles.mediumText}>{NTime}</Text>
+                            </View>
+                        </View>
+                    </TouchableOpacity >
+                )
         else
             return (
                 <TouchableOpacity style={styles.NewsRow} onPress={() => this.clickHandler(item.Code)} key={item.Code} >
-                    <View >
+                    <View style={[{ width: '100%' }]}>
                         <Text style={styles.caption} >{NewsTitle}</Text>
                     </View>
 
@@ -212,16 +223,13 @@ class NewsItem extends Component {
                             <Text style={[styles.smallText]} >{item.ResourceName}</Text>
                         </View>
                         <View style={[styles.LeftCol, { felx: 1, flexDirection: 'row', alignContent: 'flex-end', width: '30%', flexDirection: 'row-reverse' }]}>
-
-
-                            <View>
+                            <View style={styles.dateInfo}>
                                 <TouchableOpacity onPress={this.tagClickHandler}>
                                     {tagImage}
                                 </TouchableOpacity>
+                                <Text style={styles.mediumText}>{NDate}</Text>
+                                <Text style={styles.mediumText}>{NTime}</Text>
                             </View>
-                            <Text style={styles.smallText}>
-                                {item.NDate}
-                            </Text>
 
                         </View>
                     </View>
@@ -260,7 +268,6 @@ export default class NewsList extends Component {
     _retrieveData = (keyName) => {
         try {
             const value = AsyncStorage.getItem(keyName).then((val) => {
-                console.log('got value=' + val);
 
                 this.setState({
                     newsCodeList: val
@@ -270,7 +277,6 @@ export default class NewsList extends Component {
             }).catch(error => {
                 console.log(error);
             });
-            console.log('value set' + value);
 
             this.setState({
                 newsCodeList: value
@@ -308,15 +314,16 @@ export default class NewsList extends Component {
         const { PageNo, data } = this.state;
         var url = global.APIPath
 
-        console.log('sort col=' + this.props.sort);
-
         var sort = "latest"
-        if(this.props.sort)
+        if (this.props.sort)
             sort = this.props.sort
-        console.log('cur nl state=' + this.props.taggedCodeList);
 
-        if (this.props.CatCode != undefined)
-            url += 'newsbycatcode/' + this.props.CatCode + "?pageNo=" + PageNo + "&sort=" + sort;
+        if (this.props.CatCode != undefined) {
+            if (this.props.CatCode == "100")//only pic news
+                url += 'picnews/' + "?pageNo=" + PageNo + "&sort=" + sort;
+            else
+                url += 'newsbycatcode/' + this.props.CatCode + "?pageNo=" + PageNo + "&sort=" + sort;
+        }
         else if (this.props.taggedCodeList != undefined)
             url += 'newsbycodelist/' + this.props.taggedCodeList + "?pageNo=" + PageNo;
         else if (this.props.SearchKeyword != undefined)
@@ -347,7 +354,7 @@ export default class NewsList extends Component {
     _keyExtractor = (item, index) => index.toString();
     clickHandler = (newsCode) => {
         const { navigate } = this.props.navigation;
-        navigate('ShowNews', { newsCode: newsCode });
+        this.props.navigation.push('ShowNews', { newsCode: newsCode });
     }
 
     changeNewsCode = (strNewsCode) => {
@@ -365,14 +372,35 @@ export default class NewsList extends Component {
         //this.getRemoteData();
     }
 
+    _onRefresh = () => {
+        this._retrieveData('keyTaggedNews');
+        this.setState({ isLoading: true });
+        this.getRemoteData();
+    }
+
     render() {
-
         //this._storeData('keyTaggedNews', '')
-
         const spinner = this.state.isLoading ? <ActivityIndicator size='large' /> : null;
-
-        const { data, message } = this.state;
+        const { data, message, isLoading } = this.state;
         //console.log('val=' + this.state.newsCodeList);
+
+        console.log('data len=' + this.props.taggedCodeList);
+        
+        if (this.props.ShowTaggedNews == "1" && data.length == 0 && isLoading == false)
+        {
+            ToastAndroid.showWithGravity(
+                'هیچ خبری علامت گذاری نشده است',
+                ToastAndroid.SHORT,
+                ToastAndroid.CENTER,
+              );
+            }
+
+
+        var onlyPic = false;
+        if (this.props.CatCode != undefined) {
+            if (this.props.CatCode == "100")//only pic news
+                onlyPic = true;
+        }
 
         return (
             <View >
@@ -383,9 +411,15 @@ export default class NewsList extends Component {
                     data={data}
                     onEndReached={this.getRemoteData}
                     keyExtractor={this._keyExtractor}
-
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={this.state.isLoading}
+                            onRefresh={this._onRefresh}
+                        />
+                    }
                     renderItem={({ item }) =>
                         <NewsItem item={item}
+                            onlyPic={onlyPic}
                             clickHandler={this.clickHandler}
                             tagList={this.state.newsCodeList}
                             newsCode={item.Code}
@@ -410,8 +444,24 @@ const styles = EStyleSheet.create({
         padding: 8,
         backgroundColor: '#F4F2F2',
         textAlign: 'right',
-        fontFamily: "byekan",
+        fontFamily: "IRANSansMobile(FaNum)_Light",
         flex: 1,
+    },
+    onlyPicConatiner:{
+        borderBottomWidth: 10,
+        borderColor: '#EAEAEA',
+        borderRadius: 5,
+        padding: 8,
+        backgroundColor: '#F4F2F2',
+        textAlign: 'right',
+        fontFamily: "IRANSansMobile(FaNum)_Light",
+        flex: 1,
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        alignItems: 'center',
+        width:'97%',
+        marginRight: 15,
+
     },
     NewsRow2Col: {
         borderBottomWidth: 10,
@@ -420,7 +470,7 @@ const styles = EStyleSheet.create({
         padding: 8,
         backgroundColor: '#F4F2F2',
         textAlign: 'right',
-        fontFamily: "byekan",
+        fontFamily: "IRANSansMobile(FaNum)_Light",
         flex: 1,
         flexDirection: 'row',
         flexWrap: 'wrap',
@@ -433,27 +483,43 @@ const styles = EStyleSheet.create({
         width: '30%'
     },
     title: {
-        fontFamily: "byekan",
+        fontFamily: "IRANSansMobile(FaNum)_Light",
         padding: 5,
         fontSize: 15,
         lineHeight: 23,
 
     },
     smallText: {
-        fontFamily: "byekan",
+        fontFamily: "IRANSansMobile(FaNum)_Light",
         padding: 5,
         color: '#AFADAD',
         fontSize: '1.5rem',
     },
+    mediumText: {
+        fontFamily: "IRANSansMobile(FaNum)_Light",
+        padding: 5,
+        color: '#AFADAD',
+        fontSize: '2rem',
+    },
     caption: {
+        fontFamily: "IRANSansMobile(FaNum)_Light",
+        padding: 5,
+        color: '#AFADAD',
+        fontSize: '2.5rem',
         paddingRight: 10,
         width: '100%',
-        fontFamily: "byekan",
-        fontSize: '2rem',
-        width: '100%',
-        textAlign: 'justify',
-        alignSelf: 'stretch',
-        lineHeight: 30,
+        textAlign: 'left',
+        color: '#323232',
+
+        // paddingRight: 10,
+        // width: '100%',
+        // fontFamily: "IRANSansMobile(FaNum)_Light",
+        // fontSize: '2.5rem',
+        // width: '100%',
+        // textAlign: 'left',
+        // alignSelf: 'stretch',
+        // lineHeight: 20,
+        // fontWeight: 'bold'
     },
     ImageContainer: {
         margin: 3,
@@ -493,6 +559,13 @@ const styles = EStyleSheet.create({
         alignSelf: 'stretch',
         position: 'relative',
         right: 0,
+    },
+    dateInfo: {
+        flex: 1,
+        flexDirection: 'row-reverse',
+        paddingLeft: 10,
+        width: '100%',
+
     }
 });
 

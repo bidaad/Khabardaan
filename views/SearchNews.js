@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Platform, StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
+import { Platform, StyleSheet, Text, View, Image, TouchableOpacity, Keyboard } from 'react-native';
 import NewsList from '../components/NewsList';
 import Tools from '../Tools';
 import {
@@ -19,6 +19,7 @@ export class NewsByCatCode extends Component {
             Keyword: '',
             startSearch: false
         };
+
     }
 
     static navigationOptions = {
@@ -29,80 +30,98 @@ export class NewsByCatCode extends Component {
         console.log('hello' + this.state.Keyword)
         this.setState(
             {
-                startSearch:true,
+                startSearch: true,
             }
         )
+        Keyboard.dismiss();
         return;
         //const { Keyword } = this.state;
         //alert(Keyword)
-        let username=this.state.username;
+        let username = this.state.username;
         console.log(username);
     }
 
-    
+    componentDidMount(){
+        const { params } = this.props.navigation.state;
+        if (params != undefined)
+            this.setState(
+                { Keyword: params.txtKeyword }
+            )
+
+    }
 
     render() {
 
-        if(this.state.startSearch)
-        return (
-            <MenuProvider >
-                <View style={styles.SearchBar}>
-                    <View style={styles.innerSearchBar}>
-                        <Input
-                            inputContainerStyle={styles.searchTextbox}
-                            textAlign='right'
-                            autoFocus='true'
-                            returnKeyLabel='done'
-                            ref={(el) => { this.Keyword = el; }}
-                            onChangeText={(Keyword) => this.setState({ Keyword:Keyword, startSearch:false })}
-                            value={this.state.Keyword}
-                            leftIcon={
-                                <Icon
-                                    name='search'
-                                    type='font-awesome'
-                                    size={24}
-                                    color='#8C8C8C'
-                                    onPress={() => this.doSearch(this.state.Keyword)
-                                      }
-                                />
-                            }
-                        />
+        console.log('search render');
+        
+        //const defaultVal =  'bbbbbbbbbbb'//this.state.Keyword != '' ? this.state.Keyword : '';
+        //const defaultVal = this.state.Keyword;// = 'aaaaaaaaa'
+
+        if (this.state.startSearch)
+            return (
+                <MenuProvider >
+                    <View style={styles.SearchBar}>
                         
+                        <View style={styles.innerSearchBar}>
+                            <Input
+                                defaultValue={this.state.Keyword}
+                                inputContainerStyle={styles.searchTextbox}
+                                textAlign='right'
+                                autoFocus='true'
+                                returnKeyLabel='done'
+                                ref={(el) => { this.Keyword = el; }}
+                                onChangeText={(Keyword) => this.setState({ Keyword: Keyword, startSearch: false })}
+                                value={this.state.Keyword}
+                                leftIcon={
+                                    <Icon
+                                        name='search'
+                                        type='font-awesome'
+                                        size={24}
+                                        color='#8C8C8C'
+                                        onPress={() => this.doSearch(this.state.Keyword)
+                                        }
+                                    />
+                                }
+                            />
+
+                        </View>
                     </View>
-                </View>
-                <NewsList SearchKeyword={this.state.Keyword} navigation={this.props.navigation}  />
-            </MenuProvider>
-        )
+                    <NewsList SearchKeyword={this.state.Keyword} navigation={this.props.navigation} />
+                </MenuProvider>
+            )
         else
-        return (
-            <MenuProvider >
-                <View style={styles.SearchBar}>
-                    <View style={styles.innerSearchBar}>
-                        <Input
-                            inputContainerStyle={styles.searchTextbox}
-                            textAlign='right'
-                            autoFocus='true'
-                            returnKeyLabel='done'
-                            ref={(el) => { this.Keyword = el; }}
-                            onChangeText={(Keyword) => this.setState({ Keyword:Keyword, startSearch:false })}
-                            value={this.state.Keyword}
-                            leftIcon={
-                                <Icon
-                                    name='search'
-                                    type='font-awesome'
-                                    size={24}
-                                    color='#8C8C8C'
-                                    onPress={() => this.doSearch(this.state.Keyword)
-                                      }
-                                />
-                            }
-                        />
-                        
+            return (
+                <MenuProvider >
+                    <View style={styles.SearchBar}>
+                        <View style={styles.innerSearchBar}>
+                            <Input
+                                style={[{textAlignVertical: 'bottom',}]}
+                                defaultValue={this.state.Keyword}
+                                inputContainerStyle={styles.searchTextbox}
+                                textAlign='right'
+                                autoFocus='true'
+                                returnKeyLabel='done'
+                                ref={(el) => { this.Keyword = el; }}
+                                onChangeText={(Keyword) => this.setState({ Keyword: Keyword, startSearch: false })}
+                                value={this.state.Keyword}
+                                onSubmitEditing={() => this.doSearch(this.state.Keyword)}
+                                leftIcon={
+                                    <Icon
+                                        name='search'
+                                        type='font-awesome'
+                                        size={24}
+                                        color='#8C8C8C'
+                                        onPress={() => this.doSearch(this.state.Keyword)
+                                        }
+                                    />
+                                }
+                            />
+
+                        </View>
                     </View>
-                </View>
-                
-            </MenuProvider>
-        )
+
+                </MenuProvider>
+            )
     }
 }
 
@@ -119,12 +138,12 @@ const styles = StyleSheet.create({
         padding: 5,
         borderRadius: 10,
         borderWidth: 1,
-        borderColor: '#FFF'
+        borderColor: '#FFF',
 
     },
     searchTextbox: {
         height: 35,
-        padding: 5,
+        paddingTop: 10,
         borderBottomWidth: 0,
     }
 

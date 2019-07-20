@@ -32,7 +32,6 @@ export class NewsByCatCode extends Component {
         const strHeader = Tools.getCatHeader(params.catCode)
         return (
             <MenuProvider >
-                
                 <Text style={styles.header}>
                    اخبار {strHeader}
                 </Text>
@@ -53,7 +52,7 @@ const styles = StyleSheet.create({
         padding: 5,
         borderRadius: 5,
         fontSize: 20,
-        fontFamily: "byekan",
+        fontFamily: "IRANSansMobile(FaNum)_Light",
         marginRight: 5,
     },
 
