@@ -19,6 +19,11 @@ class CustomDrawerNavigator extends Component {
     navigate('Home');
   };
 
+  goSettings = () => {
+    const { navigate } = this.props.navigation;
+    navigate('Settings');
+  };
+
   showDialog = () => {
     this.setState({ dialogVisible: true });
     //const { navigate } = this.props.navigation;
@@ -59,7 +64,7 @@ class CustomDrawerNavigator extends Component {
             </View>
             <Text>درباره خبردان</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.drawerRow]} onPress={this.showDialog}>
+          {/* <TouchableOpacity style={[styles.drawerRow]} onPress={this.goSettings}>
             <View style={[styles.icons]}>
               <Icon
                 name='cog'
@@ -68,17 +73,9 @@ class CustomDrawerNavigator extends Component {
               />
             </View>
             <Text style={[styles.textItem]} >تنظیمات</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
-        <Dialog.Container visible={this.state.dialogVisible}>
-          <Dialog.Title>درباره خبردان</Dialog.Title>
-          <Dialog.Description style={[{ height: 300 }]}>
-            یک اپلیکشن خبری رایگان است که بطور متناوب اخبار را بصورت خودکار از منابع تعریف شده جمع‌آوری، دسته‌بندی و ذخیره می‌سازد.
-            {"\n\n\n"}
-            نسخه 1.2
-          </Dialog.Description>
-          <Dialog.Button label="باشه" onPress={this.handleCancel} />
-        </Dialog.Container>
+        
 
         {/* <DrawerItems
           activeBackgroundColor={"black"}

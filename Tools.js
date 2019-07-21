@@ -6,28 +6,28 @@ export default class Tools {
     static getCatHeader(catCode) {
         switch (catCode) {
             case 1:
-                return 'اجتماعي';
+                return 'اجتماعی';
                 break;
             case 2:
-                return 'اقتصادي';
+                return 'اقتصادی';
                 break;
             case 3:
-                return 'سياسي';
+                return 'سیاسی';
                 break;
             case 4:
-                return 'ورزشي';
+                return 'ورزشی';
                 break;
             case 5:
-                return 'علمي';
+                return 'علمی';
                 break;
             case 6:
-                return 'فرهنگي';
+                return 'فرهنگی';
                 break;
             case 7:
                 return 'ادب و هنر';
                 break;
             case 8:
-                return 'بين‌الملل';
+                return 'بین‌الملل';
                 break;
             case 9:
                 return 'حوادث';

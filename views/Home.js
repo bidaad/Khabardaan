@@ -9,7 +9,7 @@ import NewsByCatCode from "./NewsByCatCode";
 export default class Home extends Component {
   constructor(props) {
     super(props)
-    global.APIPath = 'http://www.recipefa.com/api/';
+    global.APIPath = 'http://api.khabardaan.ir/api/';
 
     this.state = {
        

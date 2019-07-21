@@ -1,4 +1,4 @@
-package com.khabardaan;
+package com.AKP.khabardan;
 
 import com.facebook.react.ReactActivity;
 

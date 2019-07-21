@@ -1,13 +1,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="com.khabardaan">
+  package="com.AKP.khabardan">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <permission
-        android:name="com.khabardaan.permission.C2D_MESSAGE"
+        android:name="com.AKP.khabardan.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
-    <uses-permission android:name="com.khabardaan.permission.C2D_MESSAGE" />
+    <uses-permission android:name="com.AKP.khabardan.permission.C2D_MESSAGE" />
     <!-- < Only if you're using GCM or localNotificationSchedule() > -->
 
     <uses-permission android:name="android.permission.VIBRATE" />
@@ -52,7 +52,7 @@
             android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-                <category android:name="com.khabardaan" />
+                <category android:name="com.AKP.khabardan" />
             </intent-filter>
         </receiver>
         <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationPublisher" />

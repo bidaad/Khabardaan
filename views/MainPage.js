@@ -151,7 +151,7 @@ export default class MainPage extends Component {
           //... You can use all the options from localNotifications
           message: res[0].Title, // (required)
           userInfo: res[0].Code,
-          date: new Date(Date.now() + 2 * 1000),
+          date: new Date(Date.now() + 10000 * 1000),
           repeatType: 'day'
         });
       })
